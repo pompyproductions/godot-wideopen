@@ -1,0 +1,199 @@
+# game idea: wide open (temporary name)
+
+## overview
+
+roguelike, adventurers discovering infinite dungeons
+
+pixel art, maybe 24x24 for chibi
+
+## how it works
+
+!!!! ITEMS AND INVENTORY ARE RESOURCES??
+
+	InventoryTab.tres has:
+	- name (drawer, pocket...)
+	- maxVolume, maxMass
+	- slots (load items here)
+	so you load InventoryTab.tres only if you decide that the node has an inventory!
+	(no preload)
+
+	player has pockets, backpack...
+	wardrobe has left, right
+	box has only box
+	
+	slots: minimum is 1, which is an empty slot
+	when you drop something into the slots, new slot is added
+	i think the slot is not even a .tres, it's a node
+	
+	Item(whatever item).tres has:
+	- name
+	- description
+	- volume, mass
+	- image
+
+	so Item.gd loads all those and does something with it?
+	more specific resources may inherit those 
+		
+	
+
+### 00: STORY
+
+### 01: SPLASH SCENE
+
+menus:
+new game (player name, password; like an account)
+load game (click on saved game with hour and date, enter pass)
+options
+replay tutorial?
+
+### 02: NEW GAME
+
+you're playable character 1 (PC1 for short), in a handmade level where you're, exploring?
+
+you learn to walk around in the main game mode (WSAD, jumpy pokemon-like). run into basic mobs and learn combat (with just attack and defend?).
+
+### MOVEMENT
+
+camera is separate from the player
+
+player and camera are on (0,0)
+
+when D is pressed, player travels to (1,0) with ease-out tween, and camera moves toward (2,0) but slowly
+
+player keeps doing quick, staggered travels everytime the timer goes off (0.5s indicative), whereas camera travels ahead and more linearly
+
+when D is released, player stops at last point, say (5,0), so the camera stays at (6,0). next time S is pressed, camera will travel from (6,0) to (5,2) and so on.
+
+
+
+
+
+2 — BASE
+
+this is like FFXIV character selection menu meets Necrodancer main menu
+
+as in: you walk around as a character in your base.
+
+ESCAPE brings up pop-up main menu, there's "save and exit", "options" etc
+
+in the beginning it's just a desk with two characters idling around, which are your first adventurers given to you from the start. there is also a room with a bunk bed and two lockers which are your first characters' room
+
+the lockers are your characters' equipment and inventory loadout. when they are resting they will be sleeping in their beds. you can improve the rooms (later expansion)
+
+using the desk will bring out the character sheet (in the form of a notebook). separators on the top will take you to different menus:
+
+ROSTER: portrait icons of unlocked characters. clicking on them takes you to the relative char log page)
+LOGS: one char per page. current activity, character screen as buttons)
+CURRENT ACTIVITY: character's "load page". if resting, spend time
+
+
+3 — EXPLORATION
+
+exploring: setting out from the base and exploring the map until you find a town, dungeon or whatever.
+
+walking around in the dungeon: you explore, move through procedurally generated rooms, with various levels, and final treasure in the end. then you leave and it resets.
+
+city: going to the smithy, tavern etc etc.
+
+
+4 — INTERACTION
+
+
+side-view characters. can be facing each other or not (sneaking up). 
+tab will switch between MOVES (queueing defense or whatever) and ACTIONS (talking, fleeing, inventory etc)
+
+underneath, the screen changes depending on the situation
+combat: split in half for character HUDs. 
+
+underneath, the screen is split in half for characters' HUDs, with moves on the left and actions in the middle.
+
+
+
+ conversations, etc etc
+
+---
+## FUNDAMENTAL WORKINGS
+
+### sizes and alignment
+
+Basic unit of measurement is a **full-square**: 22x20px. A full-square is sliced in half horizontally to have a **half-square** (22x10px), which is the size of small characters and objects, roughly. Walls, terrain etc. have a tile size of full-squares. If there is no wall or full-square sized object, there can be two objects/characters in one square (upper-half and lower-half).
+
+### map & minimap
+
+Map generation uses full-squares as a unit. Rooms can be no smaller than 4x3 rectangle. Rooms are defined by the "empty space" inside.
+
+Idea: step procedures. at every step, return array with rooms generated. starting room 4x3. from there, walk N/S to create two (or more) other rooms. From the rooms created (array return), pick x, and walk W/E. Every room generated shares one wall with previous room.
+
+
+## ROADMAP
+
+### 0.0 — PROOF OF CONCEPT
+
+one character walking around in an endless cave with procedurally generated rooms
+there are mobs around
+you can sneak up on them or face them
+facing will do a pokemon ! moment without the walking, just transition to fight scene
+working fight scene: semi-realtime combat (size matters style). if sneaking up, "wide open" = special effect for every kind of attack. 
+basic fight with attack and defend
+you can also use buffs but they fill an "awareness" meter
+there are objects with inventories, some you can push, some not
+player has "moved" signal which the parent scene receives and does the turn mechanic
+
+#### 0.0.01
+
+Initial commit.
+
+- basic sprites
+- hand drawn map (just objects, no walls)
+- player and object nodes
+- player animated sprite (move)
+- player and camera movement (with objects around)
+- working player WASD arrows HUD
+- player can move in empty spaces and cannot move in full ones
+
+Main Scene: DemoScene
+
+#### 0.0.02
+
+Inventory first implementation.
+
+Main Scene: DemoScene
+
+#### 0.0.03
+
+Map generation implementation.
+
+- minimap that counts 2x2 grid squares
+
+### 0.1 — FIRST PROTOTYPE
+
+- procedurally generated rooms with mobs spawning in them
+
+### 0.2 — FIRST FULL RELEASE 
+
+
+
+### 0.3 — BASE UPDATE
+
+different characters you can pick from your base, they all have their own adventures
+
+very rudimentary version of game time (just counts time, is not used as currency yet)
+
+### 0.4 — 
+
+
+game time currency implemented (gacha stamina):
+resting your characters takes time. you can play another character, which spends time. but if both characters are resting, you get stuck. enter "time" resource: you can speed-wait to have your cooldowns end instantly (in future, the characters travelling, learning skills also take time etc etc)
+
+two characters for beginning. just do
+
+
+0.2.1 — FIRST UPDATE
+
+explorations added: instead of just starting in a dungeon, you go out and explore, open map with different dynamics until you find a dungeon. stuff like camping. you can find important stuff on the way?
+
+
+0.2.2
+
+there are towns and stuff, for replenishing resources (tavern, smith, market...). they are saved so you can travel between base and towns
+
